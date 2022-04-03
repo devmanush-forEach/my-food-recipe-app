@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESULT PAGE</title>
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        body {
+            background-size: 100%;
+            background-repeat: no-repeat;
+
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+    </header>
+
+    <div class="seach_div" id="display">
+        <ul id="search_list">
+
+        </ul>
+    </div>
+
+
+    <div class="dish_div" id="detail_div">
+
+    </div>
+
+</body>
+
+</html>
+<script type="module">
+
+    import { navbar } from "/nav.js"
+    let data = navbar();
+    let header = document.getElementById("header");
+    header.innerHTML = data;
+
+    let detail_div = document.getElementById("detail_div");
+    let timeout;
+
+    document.getElementById("query").addEventListener("input", function () {
+        deBounce(getDishes, 2000);
+    });
+    function deBounce(func, time) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func();
+        }, time);
+
+    }
+    // getDishes()
+    async function getDishes() {
+
+
+        try {
+            let query = document.getElementById("query").value;
+            let url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`;
+
+            let response = await fetch(url);
+            let data = await response.json();
+            console.log(data.meals);
+            showNames(data.meals);
+
+
+        } catch (err) {
+            console.log(err);
+        }
+
+    }
+    function showNames(meals) {
+        // detail_div.style.display = "none";
+        let list = document.getElementById("search_list");
+        list.innerHTML = "";
+        document.getElementById("display").style.display = "block";
+        meals.forEach(meal => {
+            let li = document.createElement("li")
+            li.innerText = meal.strMeal;
+            li.addEventListener("click", function () {
+                showDish(meal);
+            })
+            list.appendChild(li);
+
+        });
+    }
+
+        let dish = JSON.parse(localStorage.getItem('result_dish'));
+        if(dish){
+            showDish(dish);
+        }
+    
+
+    function showDish(meal) {
+
+
+        document.getElementById("display").style.display = "none";
+        document.getElementById("query").value = "";
+
+        detail_div.innerHTML = "";
+        detail_div.style.display = "flex";
+
+
+        let img = document.createElement("img");
+        img.className = "img";
+        img.src = meal.strMealThumb;
+
+        let info = document.createElement("div");
+        info.className = "info_div";
+
+        let name = document.createElement("h1");
+        name.className = "name";
+        name.innerText = `NAME : ${meal.strMeal}`;
+
+        let a = document.createElement("a");
+        a.href = meal.strYoutube;
+        a.className = "ytLink"
+        a.innerText = "Show receipe on youTube";
+
+        let area = document.createElement("p");
+        area.className = "area";
+        area.innerText = `TYPE : ${meal.strArea}`;
+
+        let categ = document.createElement("p");
+        categ.className = "area";
+        categ.innerText = `CATEGORY : ${meal.strCategory}`;
+
+        let kind = document.createElement("p");
+        kind.className = "area";
+        kind.innerText = `KIND : ${meal.strTags}`;
+
+
+        info.append(name, area, categ, kind, a);
+
+        detail_div.append(img, info);
+
+    }
+
+</script>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECEIPE OF THE DAY</title>
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="home.css">
+    <script type="module" src="./query.js"></script>
+    <style>
+        .ro_day {
+            position: relative;
+            top: 100px;
+            width: 70vw;
+            margin: auto;
+            height: 70vh;
+            background-color: rgb(146, 229, 229);
+            box-shadow: 10px 10px 20px black;
+            border-radius: 50px;
+            overflow: hidden;
+            display: flex;
+
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+    </header>
+
+    <div class="ro_day">
+
+    </div>
+    <div class="seach_div" id="display">
+
+        <ul id="search_list">
+
+        </ul>
+
+    </div>z
+
+</body>
+
+</html>
+
+<script type="module">
+
+    getReciepe();
+    async function getReciepe() {
+
+        try {
+            let url = "https://www.themealdb.com/api/json/v1/1/random.php"
+
+            let response = await fetch(url);
+            let data = await response.json();
+
+            console.log(data.meals);
+            showReceipe(data.meals[0]);
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    function showReceipe(meal) {
+        let div = document.querySelector(".ro_day");
+
+        let img = document.createElement("img");
+        img.className = "img";
+        img.src = meal.strMealThumb;
+
+        let info = document.createElement("div");
+        info.className = "info_div";
+
+        let name = document.createElement("h1");
+        name.className = "name";
+        name.innerText = `NAME : ${meal.strMeal}`;
+
+        let a = document.createElement("a");
+        a.href = meal.strYoutube;
+        a.className = "ytLink"
+        a.innerText = "Watch recipe on youTube";
+
+        let area = document.createElement("p");
+        area.className = "area";
+        area.innerText = `Origin : ${meal.strArea}`;
+
+        let categ = document.createElement("p");
+        categ.className = "area";
+        categ.innerText = `CATEGORY : ${meal.strCategory}`;
+
+        let kind = document.createElement("p");
+        kind.className = "area";
+        kind.innerText = `KIND : ${meal.strTags}`;
+
+
+        info.append(name, area, categ, kind, a);
+
+        div.append(img, info);
+
+
+    }
+
+
+</script>
